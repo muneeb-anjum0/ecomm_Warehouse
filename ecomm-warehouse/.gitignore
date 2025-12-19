@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv
+.pytest_cache/
+.coverage
+htmlcov/
+*.egg-info/
+dist/
+build/
+
+# Airflow
+logs/
+airflow.db
+unittests.cfg
+airflow_settings.yaml
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Data (don't commit large data files, only structure)
+data/incoming/orders/*
+data/incoming/events/*
+!data/incoming/orders/.gitkeep
+!data/incoming/events/.gitkeep
+
+# Environment
+.env
+.env.local
+
+# Docker
+.dockerignore
