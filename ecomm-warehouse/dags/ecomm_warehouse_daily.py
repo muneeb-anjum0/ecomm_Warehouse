@@ -331,15 +331,17 @@ end = DummyOperator(
 # Set dependencies
 start >> [extract_orders_task, extract_events_task, extract_products_task]
 
-[extract_orders_task, extract_events_task, extract_products_task] >> \
-    [transform_orders_task, transform_events_task, transform_products_task]
+extract_orders_task >> transform_orders_task
+extract_events_task >> transform_events_task
+extract_products_task >> transform_products_task
 
 [transform_orders_task, transform_events_task, transform_products_task] >> dq_checks_task
 
 dq_checks_task >> [load_dim_date_task, load_dim_product_task, load_dim_user_task]
 
-[load_dim_date_task, load_dim_product_task, load_dim_user_task] >> \
-    [load_fact_orders_task, load_fact_events_task]
+load_dim_date_task >> [load_fact_orders_task, load_fact_events_task]
+load_dim_product_task >> [load_fact_orders_task, load_fact_events_task]
+load_dim_user_task >> [load_fact_orders_task, load_fact_events_task]
 
 [load_fact_orders_task, load_fact_events_task] >> compute_metrics_task
 

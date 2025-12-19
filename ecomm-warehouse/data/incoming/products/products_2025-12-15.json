@@ -1,0 +1,702 @@
+[
+  {
+    "product_id": "PROD_0001",
+    "product_name": "PROD_0001 - Toys",
+    "category": "Clothing",
+    "brand": "BrandE",
+    "current_price": 81.14
+  },
+  {
+    "product_id": "PROD_0002",
+    "product_name": "PROD_0002 - Home",
+    "category": "Sports",
+    "brand": "BrandA",
+    "current_price": 36.92
+  },
+  {
+    "product_id": "PROD_0003",
+    "product_name": "PROD_0003 - Clothing",
+    "category": "Books",
+    "brand": "BrandD",
+    "current_price": 252.56
+  },
+  {
+    "product_id": "PROD_0004",
+    "product_name": "PROD_0004 - Clothing",
+    "category": "Clothing",
+    "brand": "BrandB",
+    "current_price": 27.43
+  },
+  {
+    "product_id": "PROD_0005",
+    "product_name": "PROD_0005 - Home",
+    "category": "Clothing",
+    "brand": "BrandA",
+    "current_price": 457.46
+  },
+  {
+    "product_id": "PROD_0006",
+    "product_name": "PROD_0006 - Toys",
+    "category": "Toys",
+    "brand": "BrandE",
+    "current_price": 221.4
+  },
+  {
+    "product_id": "PROD_0007",
+    "product_name": "PROD_0007 - Clothing",
+    "category": "Electronics",
+    "brand": "BrandA",
+    "current_price": 231.91
+  },
+  {
+    "product_id": "PROD_0008",
+    "product_name": "PROD_0008 - Toys",
+    "category": "Sports",
+    "brand": "BrandA",
+    "current_price": 181.39
+  },
+  {
+    "product_id": "PROD_0009",
+    "product_name": "PROD_0009 - Books",
+    "category": "Sports",
+    "brand": "BrandA",
+    "current_price": 440.89
+  },
+  {
+    "product_id": "PROD_0010",
+    "product_name": "PROD_0010 - Electronics",
+    "category": "Toys",
+    "brand": "BrandA",
+    "current_price": 68.78
+  },
+  {
+    "product_id": "PROD_0011",
+    "product_name": "PROD_0011 - Toys",
+    "category": "Toys",
+    "brand": "BrandC",
+    "current_price": 48.43
+  },
+  {
+    "product_id": "PROD_0012",
+    "product_name": "PROD_0012 - Home",
+    "category": "Books",
+    "brand": "BrandA",
+    "current_price": 20.24
+  },
+  {
+    "product_id": "PROD_0013",
+    "product_name": "PROD_0013 - Toys",
+    "category": "Home",
+    "brand": "BrandC",
+    "current_price": 125.74
+  },
+  {
+    "product_id": "PROD_0014",
+    "product_name": "PROD_0014 - Home",
+    "category": "Books",
+    "brand": "BrandE",
+    "current_price": 61.91
+  },
+  {
+    "product_id": "PROD_0015",
+    "product_name": "PROD_0015 - Sports",
+    "category": "Electronics",
+    "brand": "BrandB",
+    "current_price": 60.45
+  },
+  {
+    "product_id": "PROD_0016",
+    "product_name": "PROD_0016 - Toys",
+    "category": "Books",
+    "brand": "BrandE",
+    "current_price": 224.39
+  },
+  {
+    "product_id": "PROD_0017",
+    "product_name": "PROD_0017 - Home",
+    "category": "Books",
+    "brand": "BrandC",
+    "current_price": 191.17
+  },
+  {
+    "product_id": "PROD_0018",
+    "product_name": "PROD_0018 - Home",
+    "category": "Home",
+    "brand": "BrandA",
+    "current_price": 34.37
+  },
+  {
+    "product_id": "PROD_0019",
+    "product_name": "PROD_0019 - Sports",
+    "category": "Home",
+    "brand": "BrandD",
+    "current_price": 339.65
+  },
+  {
+    "product_id": "PROD_0020",
+    "product_name": "PROD_0020 - Books",
+    "category": "Home",
+    "brand": "BrandE",
+    "current_price": 170.16
+  },
+  {
+    "product_id": "PROD_0021",
+    "product_name": "PROD_0021 - Electronics",
+    "category": "Sports",
+    "brand": "BrandA",
+    "current_price": 375.79
+  },
+  {
+    "product_id": "PROD_0022",
+    "product_name": "PROD_0022 - Sports",
+    "category": "Toys",
+    "brand": "BrandE",
+    "current_price": 249.98
+  },
+  {
+    "product_id": "PROD_0023",
+    "product_name": "PROD_0023 - Home",
+    "category": "Books",
+    "brand": "BrandE",
+    "current_price": 414.79
+  },
+  {
+    "product_id": "PROD_0024",
+    "product_name": "PROD_0024 - Home",
+    "category": "Electronics",
+    "brand": "BrandC",
+    "current_price": 108.11
+  },
+  {
+    "product_id": "PROD_0025",
+    "product_name": "PROD_0025 - Home",
+    "category": "Home",
+    "brand": "BrandD",
+    "current_price": 350.78
+  },
+  {
+    "product_id": "PROD_0026",
+    "product_name": "PROD_0026 - Toys",
+    "category": "Home",
+    "brand": "BrandE",
+    "current_price": 116.63
+  },
+  {
+    "product_id": "PROD_0027",
+    "product_name": "PROD_0027 - Sports",
+    "category": "Sports",
+    "brand": "BrandB",
+    "current_price": 397.47
+  },
+  {
+    "product_id": "PROD_0028",
+    "product_name": "PROD_0028 - Home",
+    "category": "Electronics",
+    "brand": "BrandE",
+    "current_price": 429.98
+  },
+  {
+    "product_id": "PROD_0029",
+    "product_name": "PROD_0029 - Toys",
+    "category": "Clothing",
+    "brand": "BrandB",
+    "current_price": 267.61
+  },
+  {
+    "product_id": "PROD_0030",
+    "product_name": "PROD_0030 - Clothing",
+    "category": "Home",
+    "brand": "BrandB",
+    "current_price": 141.91
+  },
+  {
+    "product_id": "PROD_0031",
+    "product_name": "PROD_0031 - Toys",
+    "category": "Toys",
+    "brand": "BrandA",
+    "current_price": 280.94
+  },
+  {
+    "product_id": "PROD_0032",
+    "product_name": "PROD_0032 - Electronics",
+    "category": "Sports",
+    "brand": "BrandA",
+    "current_price": 341.15
+  },
+  {
+    "product_id": "PROD_0033",
+    "product_name": "PROD_0033 - Toys",
+    "category": "Electronics",
+    "brand": "BrandC",
+    "current_price": 151.68
+  },
+  {
+    "product_id": "PROD_0034",
+    "product_name": "PROD_0034 - Books",
+    "category": "Sports",
+    "brand": "BrandD",
+    "current_price": 112.95
+  },
+  {
+    "product_id": "PROD_0035",
+    "product_name": "PROD_0035 - Clothing",
+    "category": "Electronics",
+    "brand": "BrandE",
+    "current_price": 99.02
+  },
+  {
+    "product_id": "PROD_0036",
+    "product_name": "PROD_0036 - Toys",
+    "category": "Books",
+    "brand": "BrandD",
+    "current_price": 155.73
+  },
+  {
+    "product_id": "PROD_0037",
+    "product_name": "PROD_0037 - Toys",
+    "category": "Home",
+    "brand": "BrandE",
+    "current_price": 469.48
+  },
+  {
+    "product_id": "PROD_0038",
+    "product_name": "PROD_0038 - Toys",
+    "category": "Home",
+    "brand": "BrandE",
+    "current_price": 353.39
+  },
+  {
+    "product_id": "PROD_0039",
+    "product_name": "PROD_0039 - Sports",
+    "category": "Electronics",
+    "brand": "BrandC",
+    "current_price": 15.1
+  },
+  {
+    "product_id": "PROD_0040",
+    "product_name": "PROD_0040 - Toys",
+    "category": "Sports",
+    "brand": "BrandA",
+    "current_price": 242.43
+  },
+  {
+    "product_id": "PROD_0041",
+    "product_name": "PROD_0041 - Clothing",
+    "category": "Books",
+    "brand": "BrandB",
+    "current_price": 411.88
+  },
+  {
+    "product_id": "PROD_0042",
+    "product_name": "PROD_0042 - Books",
+    "category": "Clothing",
+    "brand": "BrandD",
+    "current_price": 270.17
+  },
+  {
+    "product_id": "PROD_0043",
+    "product_name": "PROD_0043 - Clothing",
+    "category": "Books",
+    "brand": "BrandD",
+    "current_price": 397.34
+  },
+  {
+    "product_id": "PROD_0044",
+    "product_name": "PROD_0044 - Home",
+    "category": "Toys",
+    "brand": "BrandD",
+    "current_price": 212.25
+  },
+  {
+    "product_id": "PROD_0045",
+    "product_name": "PROD_0045 - Clothing",
+    "category": "Sports",
+    "brand": "BrandB",
+    "current_price": 89.03
+  },
+  {
+    "product_id": "PROD_0046",
+    "product_name": "PROD_0046 - Books",
+    "category": "Books",
+    "brand": "BrandD",
+    "current_price": 424.16
+  },
+  {
+    "product_id": "PROD_0047",
+    "product_name": "PROD_0047 - Clothing",
+    "category": "Electronics",
+    "brand": "BrandD",
+    "current_price": 478.05
+  },
+  {
+    "product_id": "PROD_0048",
+    "product_name": "PROD_0048 - Home",
+    "category": "Clothing",
+    "brand": "BrandA",
+    "current_price": 206.71
+  },
+  {
+    "product_id": "PROD_0049",
+    "product_name": "PROD_0049 - Clothing",
+    "category": "Toys",
+    "brand": "BrandD",
+    "current_price": 149.52
+  },
+  {
+    "product_id": "PROD_0050",
+    "product_name": "PROD_0050 - Electronics",
+    "category": "Electronics",
+    "brand": "BrandE",
+    "current_price": 324.42
+  },
+  {
+    "product_id": "PROD_0051",
+    "product_name": "PROD_0051 - Electronics",
+    "category": "Clothing",
+    "brand": "BrandA",
+    "current_price": 458.17
+  },
+  {
+    "product_id": "PROD_0052",
+    "product_name": "PROD_0052 - Home",
+    "category": "Books",
+    "brand": "BrandA",
+    "current_price": 315.32
+  },
+  {
+    "product_id": "PROD_0053",
+    "product_name": "PROD_0053 - Toys",
+    "category": "Books",
+    "brand": "BrandE",
+    "current_price": 291.22
+  },
+  {
+    "product_id": "PROD_0054",
+    "product_name": "PROD_0054 - Electronics",
+    "category": "Electronics",
+    "brand": "BrandA",
+    "current_price": 324.03
+  },
+  {
+    "product_id": "PROD_0055",
+    "product_name": "PROD_0055 - Toys",
+    "category": "Books",
+    "brand": "BrandB",
+    "current_price": 380.51
+  },
+  {
+    "product_id": "PROD_0056",
+    "product_name": "PROD_0056 - Clothing",
+    "category": "Sports",
+    "brand": "BrandE",
+    "current_price": 389.08
+  },
+  {
+    "product_id": "PROD_0057",
+    "product_name": "PROD_0057 - Electronics",
+    "category": "Toys",
+    "brand": "BrandE",
+    "current_price": 263.51
+  },
+  {
+    "product_id": "PROD_0058",
+    "product_name": "PROD_0058 - Home",
+    "category": "Sports",
+    "brand": "BrandA",
+    "current_price": 76.7
+  },
+  {
+    "product_id": "PROD_0059",
+    "product_name": "PROD_0059 - Home",
+    "category": "Electronics",
+    "brand": "BrandD",
+    "current_price": 74.7
+  },
+  {
+    "product_id": "PROD_0060",
+    "product_name": "PROD_0060 - Clothing",
+    "category": "Toys",
+    "brand": "BrandB",
+    "current_price": 173.58
+  },
+  {
+    "product_id": "PROD_0061",
+    "product_name": "PROD_0061 - Clothing",
+    "category": "Toys",
+    "brand": "BrandB",
+    "current_price": 424.81
+  },
+  {
+    "product_id": "PROD_0062",
+    "product_name": "PROD_0062 - Toys",
+    "category": "Home",
+    "brand": "BrandA",
+    "current_price": 325.57
+  },
+  {
+    "product_id": "PROD_0063",
+    "product_name": "PROD_0063 - Home",
+    "category": "Electronics",
+    "brand": "BrandD",
+    "current_price": 379.03
+  },
+  {
+    "product_id": "PROD_0064",
+    "product_name": "PROD_0064 - Toys",
+    "category": "Electronics",
+    "brand": "BrandC",
+    "current_price": 253.52
+  },
+  {
+    "product_id": "PROD_0065",
+    "product_name": "PROD_0065 - Electronics",
+    "category": "Home",
+    "brand": "BrandA",
+    "current_price": 50.32
+  },
+  {
+    "product_id": "PROD_0066",
+    "product_name": "PROD_0066 - Sports",
+    "category": "Home",
+    "brand": "BrandA",
+    "current_price": 491.33
+  },
+  {
+    "product_id": "PROD_0067",
+    "product_name": "PROD_0067 - Electronics",
+    "category": "Electronics",
+    "brand": "BrandA",
+    "current_price": 64.48
+  },
+  {
+    "product_id": "PROD_0068",
+    "product_name": "PROD_0068 - Home",
+    "category": "Books",
+    "brand": "BrandD",
+    "current_price": 322.39
+  },
+  {
+    "product_id": "PROD_0069",
+    "product_name": "PROD_0069 - Electronics",
+    "category": "Books",
+    "brand": "BrandB",
+    "current_price": 245.69
+  },
+  {
+    "product_id": "PROD_0070",
+    "product_name": "PROD_0070 - Toys",
+    "category": "Sports",
+    "brand": "BrandC",
+    "current_price": 237.92
+  },
+  {
+    "product_id": "PROD_0071",
+    "product_name": "PROD_0071 - Home",
+    "category": "Electronics",
+    "brand": "BrandC",
+    "current_price": 38.1
+  },
+  {
+    "product_id": "PROD_0072",
+    "product_name": "PROD_0072 - Clothing",
+    "category": "Sports",
+    "brand": "BrandC",
+    "current_price": 326.1
+  },
+  {
+    "product_id": "PROD_0073",
+    "product_name": "PROD_0073 - Books",
+    "category": "Home",
+    "brand": "BrandB",
+    "current_price": 337.37
+  },
+  {
+    "product_id": "PROD_0074",
+    "product_name": "PROD_0074 - Sports",
+    "category": "Clothing",
+    "brand": "BrandB",
+    "current_price": 223.19
+  },
+  {
+    "product_id": "PROD_0075",
+    "product_name": "PROD_0075 - Sports",
+    "category": "Electronics",
+    "brand": "BrandE",
+    "current_price": 51.27
+  },
+  {
+    "product_id": "PROD_0076",
+    "product_name": "PROD_0076 - Toys",
+    "category": "Clothing",
+    "brand": "BrandB",
+    "current_price": 428.08
+  },
+  {
+    "product_id": "PROD_0077",
+    "product_name": "PROD_0077 - Books",
+    "category": "Sports",
+    "brand": "BrandB",
+    "current_price": 216.12
+  },
+  {
+    "product_id": "PROD_0078",
+    "product_name": "PROD_0078 - Clothing",
+    "category": "Toys",
+    "brand": "BrandC",
+    "current_price": 85.03
+  },
+  {
+    "product_id": "PROD_0079",
+    "product_name": "PROD_0079 - Electronics",
+    "category": "Sports",
+    "brand": "BrandB",
+    "current_price": 438.49
+  },
+  {
+    "product_id": "PROD_0080",
+    "product_name": "PROD_0080 - Home",
+    "category": "Home",
+    "brand": "BrandD",
+    "current_price": 383.65
+  },
+  {
+    "product_id": "PROD_0081",
+    "product_name": "PROD_0081 - Clothing",
+    "category": "Sports",
+    "brand": "BrandA",
+    "current_price": 13.62
+  },
+  {
+    "product_id": "PROD_0082",
+    "product_name": "PROD_0082 - Clothing",
+    "category": "Home",
+    "brand": "BrandE",
+    "current_price": 31.48
+  },
+  {
+    "product_id": "PROD_0083",
+    "product_name": "PROD_0083 - Sports",
+    "category": "Sports",
+    "brand": "BrandB",
+    "current_price": 80.63
+  },
+  {
+    "product_id": "PROD_0084",
+    "product_name": "PROD_0084 - Books",
+    "category": "Electronics",
+    "brand": "BrandC",
+    "current_price": 362.47
+  },
+  {
+    "product_id": "PROD_0085",
+    "product_name": "PROD_0085 - Home",
+    "category": "Toys",
+    "brand": "BrandB",
+    "current_price": 478.48
+  },
+  {
+    "product_id": "PROD_0086",
+    "product_name": "PROD_0086 - Books",
+    "category": "Books",
+    "brand": "BrandB",
+    "current_price": 171.18
+  },
+  {
+    "product_id": "PROD_0087",
+    "product_name": "PROD_0087 - Clothing",
+    "category": "Books",
+    "brand": "BrandD",
+    "current_price": 370.08
+  },
+  {
+    "product_id": "PROD_0088",
+    "product_name": "PROD_0088 - Electronics",
+    "category": "Books",
+    "brand": "BrandB",
+    "current_price": 240.11
+  },
+  {
+    "product_id": "PROD_0089",
+    "product_name": "PROD_0089 - Books",
+    "category": "Clothing",
+    "brand": "BrandB",
+    "current_price": 414.22
+  },
+  {
+    "product_id": "PROD_0090",
+    "product_name": "PROD_0090 - Sports",
+    "category": "Books",
+    "brand": "BrandC",
+    "current_price": 191.57
+  },
+  {
+    "product_id": "PROD_0091",
+    "product_name": "PROD_0091 - Books",
+    "category": "Electronics",
+    "brand": "BrandC",
+    "current_price": 152.8
+  },
+  {
+    "product_id": "PROD_0092",
+    "product_name": "PROD_0092 - Clothing",
+    "category": "Books",
+    "brand": "BrandE",
+    "current_price": 157.77
+  },
+  {
+    "product_id": "PROD_0093",
+    "product_name": "PROD_0093 - Books",
+    "category": "Clothing",
+    "brand": "BrandB",
+    "current_price": 350.17
+  },
+  {
+    "product_id": "PROD_0094",
+    "product_name": "PROD_0094 - Books",
+    "category": "Clothing",
+    "brand": "BrandC",
+    "current_price": 499.83
+  },
+  {
+    "product_id": "PROD_0095",
+    "product_name": "PROD_0095 - Home",
+    "category": "Electronics",
+    "brand": "BrandB",
+    "current_price": 134.85
+  },
+  {
+    "product_id": "PROD_0096",
+    "product_name": "PROD_0096 - Electronics",
+    "category": "Toys",
+    "brand": "BrandA",
+    "current_price": 274.92
+  },
+  {
+    "product_id": "PROD_0097",
+    "product_name": "PROD_0097 - Electronics",
+    "category": "Electronics",
+    "brand": "BrandC",
+    "current_price": 375.76
+  },
+  {
+    "product_id": "PROD_0098",
+    "product_name": "PROD_0098 - Books",
+    "category": "Clothing",
+    "brand": "BrandE",
+    "current_price": 375.7
+  },
+  {
+    "product_id": "PROD_0099",
+    "product_name": "PROD_0099 - Books",
+    "category": "Sports",
+    "brand": "BrandC",
+    "current_price": 288.88
+  },
+  {
+    "product_id": "PROD_0100",
+    "product_name": "PROD_0100 - Sports",
+    "category": "Sports",
+    "brand": "BrandC",
+    "current_price": 448.32
+  }
+]

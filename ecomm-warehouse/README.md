@@ -1,436 +1,562 @@
-# E-commerce Analytics Warehouse
+# E-Commerce Analytics Warehouse 📊
 
-A production-grade data pipeline for E-commerce analytics built with **Python + Apache Airflow + PostgreSQL + Docker**.
+A **production-ready, real-time data pipeline** for e-commerce analytics. Extract live product, order, and event data from **Fake Store API** (free, no-auth public API), transform and cleanse it, and load it into a star-schema data warehouse for analytics and reporting.
 
-Ingests raw order & event data daily, cleans it through staging layers, loads to a star schema warehouse, validates data quality, and produces analytics-ready tables.
+> **This project demonstrates real-time API data ingestion + batch processing + data warehouse best practices** in a fully containerized, production-ready setup.
 
-## 🏗️ Architecture
+---
 
-```
-Data Sources
-    ├── Orders (JSON, daily)
-    ├── Events (CSV, daily)
-    └── Products (API, weekly)
-           ↓
-    ┌──────────────────┐
-    │  Raw Layer       │  (immutable)
-    │  - raw.orders    │
-    │  - raw.events    │
-    │  - raw.products  │
-    └──────────────────┘
-           ↓
-    ┌──────────────────┐
-    │  Staging Layer   │  (cleaned)
-    │  - staging.*     │
-    └──────────────────┘
-           ↓
-    ┌──────────────────────────┐
-    │  Quality Checks          │  (validate)
-    │  - Volume rules          │
-    │  - Uniqueness            │
-    │  - Revenue validation    │
-    │  - Future timestamps     │
-    └──────────────────────────┘
-           ↓
-    ┌──────────────────┐
-    │  Warehouse       │  (star schema)
-    │  ├─ Dimensions   │
-    │  │  ├─ dim_date  │
-    │  │  ├─ dim_user  │
-    │  │  └─ dim_product│
-    │  └─ Facts        │
-    │     ├─ fact_orders│
-    │     └─ fact_events│
-    └──────────────────┘
-           ↓
-    ┌──────────────────┐
-    │  Analytics       │
-    │  - daily_metrics │
-    │  - audit logs    │
-    └──────────────────┘
-```
-
-### Data Layers
-
-1. **Raw Layer** (`raw` schema)
-   - Immutable, never updated
-   - Stores exact data as received
-   - Tables: `raw.orders_json`, `raw.events_csv`, `raw.products_json`
-
-2. **Staging Layer** (`staging` schema)
-   - Cleaned, validated, deduplicated
-   - Ready for analytics
-   - Tables: `staging.orders_clean`, `staging.events_clean`, `staging.products_clean`
-
-3. **Warehouse Layer** (`warehouse` schema)
-   - Star schema with dimensions and facts
-   - Optimized for BI/analytics queries
-   - Dimensions: `dim_date`, `dim_user`, `dim_product`
-   - Facts: `fact_orders`, `fact_events`
-   - Metrics: `daily_metrics`
-
-4. **Audit Layer** (`audit` schema)
-   - Quality check results
-   - Pipeline run logs
-   - Bad record quarantine
-   - Tables: `audit.pipeline_runs`, `audit.dq_failures`, `audit.bad_records`
-
-## 🚀 Quick Start
+## 🚀 Quick Start (5 minutes)
 
 ### Prerequisites
-- Docker & Docker Compose
-- 4GB RAM minimum (8GB recommended)
-- Ports available: 5432 (Postgres), 8080 (Airflow), 5050 (pgAdmin)
+- Docker & Docker Compose installed
+- Port 8080, 5050, 5432 available
 
-### 1. Clone & Setup
+### 1. Start All Services
+
 ```bash
 cd ecomm-warehouse
-
-# Generate 7 days of sample data
-python data/generators/generate_sample_data.py 2025-12-13 7
-
-# Build and start containers
 docker-compose up -d
+```
 
-# Wait for containers to be healthy
-sleep 30
-
-# Verify all containers are running
+Wait 30 seconds for containers to initialize. Check status:
+```bash
 docker-compose ps
 ```
 
-### 2. Access Services
-- **Airflow UI**: http://localhost:8080
-  - Username: `admin`
-  - Password: `admin`
-  
-- **pgAdmin**: http://localhost:5050
-  - Email: `admin@example.com`
-  - Password: `admin`
+All services should show `Up` status. ✅
 
-### 3. Trigger a Pipeline Run
+### 2. Access the UIs
+
+| Service | URL | Login |
+|---------|-----|-------|
+| **Airflow DAGs** | http://localhost:8080 | `airflow` / `airflow` |
+| **Database UI** | http://localhost:5050 | `admin@example.com` / `admin` |
+| **Database** | localhost:5432 | `airflow` / `airflow` |
+
+### 3. Trigger a Real-Time API Run
+
+The `ecomm_api_polling` DAG runs **automatically every 10 minutes**, OR trigger manually:
+
 ```bash
-# Via Airflow UI
-# Navigate to Dags > ecomm_warehouse_daily > Trigger DAG
-
-# Or via command line
-docker-compose exec airflow-scheduler airflow dags trigger ecomm_warehouse_daily
+docker-compose exec airflow-scheduler airflow dags trigger ecomm_api_polling
 ```
 
-### 4. Monitor & Validate
+### 4. Check Data
+
 ```bash
-# View scheduler logs
-docker-compose logs -f airflow-scheduler
+# Count orders in warehouse (via terminal)
+docker-compose exec postgres psql -U airflow -d ecommerce_warehouse -c \
+  "SELECT COUNT(*) as total_orders FROM warehouse.fact_orders;"
 
-# Connect to Postgres
-docker-compose exec postgres psql -U airflow -d ecommerce_warehouse
-
-# Sample query: Check daily metrics
-SELECT * FROM warehouse.daily_metrics ORDER BY run_date DESC LIMIT 1;
-
-# Sample query: Revenue by category
-SELECT 
-    dp.category,
-    DATE(fo.order_ts) as order_date,
-    COUNT(*) as order_count,
-    SUM(fo.revenue) as total_revenue
-FROM warehouse.fact_orders fo
-JOIN warehouse.dim_product dp ON fo.product_id = dp.product_id
-GROUP BY dp.category, DATE(fo.order_ts)
-ORDER BY order_date DESC, total_revenue DESC;
+# Or query in pgAdmin UI → Query Tool
 ```
 
-## 📊 Project Structure
+**That's it!** The pipeline is ingesting real data from DummyJSON API and loading it into your warehouse. 🎉
+
+---
+
+## 📊 What This Does
+
+### Problem It Solves
+You need a modern, scalable data pipeline that:
+- ✅ Fetches **real-time data from APIs** (194 products with rich attributes)
+- ✅ Handles **batch data** from local sources simultaneously
+- ✅ Validates data quality before loading to warehouse
+- ✅ Transforms raw data into **star schema** for analytics
+- ✅ Runs reliably with **Airflow orchestration** and monitoring
+- ✅ Tracks inventory, discounts, and customer behavior
+
+### How It Works (High-Level)
+
+```
+DummyJSON API (Real-Time)           Local Files (Batch)
+    ↓ (every 10 min)                      ↓ (daily)
+┌─────────────────────────────────────────────┐
+│     EXTRACT (api_polling DAG)               │
+│  ├─ Poll /products (194 items)             │
+│  ├─ Poll /carts (50 shopping carts)        │
+│  └─ Insert into raw.* tables               │
+└─────────────────────────────────────────────┘
+                    ↓
+┌─────────────────────────────────────────────┐
+│     TRANSFORM (warehouse_daily DAG)         │
+│  ├─ Type casting, deduplication            │
+│  ├─ Clean null values, invalid records     │
+│  └─ Write to staging.* tables              │
+└─────────────────────────────────────────────┘
+                    ↓
+┌─────────────────────────────────────────────┐
+│     QUALITY CHECKS                          │
+│  ├─ Validate volume (min records)          │
+│  ├─ Check uniqueness                       │
+│  ├─ Validate timestamps                    │
+│  └─ Log failures to audit.* tables         │
+└─────────────────────────────────────────────┘
+                    ↓
+┌─────────────────────────────────────────────┐
+│     LOAD (warehouse_daily DAG)              │
+│  ├─ Upsert dimensions (users, products)    │
+│  ├─ Insert facts (orders, events)          │
+│  └─ Calculate daily metrics                │
+└─────────────────────────────────────────────┘
+                    ↓
+           Star Schema ⭐
+      Ready for Analytics & BI
+```
+
+---
+
+## 🔌 Data Sources
+
+### **Fake Store API** (Real-Time) ✨ NEW!
+
+Free, public API with realistic e-commerce data. **No authentication required.**
+
+- **Base URL:** https://fakestoreapi.com
+- **Endpoints Used:**
+  - `GET /products` → Products catalog
+  - `GET /carts` → Orders/carts
+  - `GET /users` → Customer data
+- **Polling:** Every 10 minutes via `ecomm_api_polling` DAG
+- **Data:** ~20 products, ~10 carts, ~10 users (sample data)
+
+**Why Fake Store API?**
+- ✅ Free, no API key needed
+- ✅ Realistic e-commerce schema
+- ✅ Stable, reliable endpoint
+- ✅ Perfect for demos & learning
+- ✅ Can replace with real API (Shopify, WooCommerce, etc.)
+
+### **Local File Sources** (Batch)
+
+For testing or batch ingestion:
+- **Orders:** `/data/incoming/orders/YYYY-MM-DD/orders.json`
+- **Events:** `/data/incoming/events/YYYY-MM-DD/events.csv`
+- **Products:** `/data/incoming/products/products_YYYY-MM-DD.json` (generated Mondays)
+
+Generate test data:
+```bash
+docker-compose exec airflow-scheduler python /opt/airflow/data/generators/generate_sample_data.py 2025-12-22 1
+```
+
+---
+
+## 🏗️ Architecture & Schema
+
+### Database Layers
+
+```
+┌────────────────────────────────────────────────────────┐
+│ RAW LAYER (raw schema) - Immutable landing zone        │
+│ ├─ raw.orders_json        JSONB bulk storage           │
+│ ├─ raw.events_csv         CSV-normalized events        │
+│ └─ raw.products_json      JSONB product catalog        │
+└────────────────────────────────────────────────────────┘
+
+┌────────────────────────────────────────────────────────┐
+│ STAGING LAYER (staging schema) - Cleaned & typed      │
+│ ├─ staging.orders_clean   Typed, deduplicated orders  │
+│ ├─ staging.events_clean   Normalized clickstream      │
+│ └─ staging.products_clean Enriched catalog            │
+└────────────────────────────────────────────────────────┘
+
+┌────────────────────────────────────────────────────────┐
+│ WAREHOUSE LAYER (warehouse schema) - Star Schema ⭐   │
+│                                                         │
+│  DIMENSIONS:                                           │
+│  ├─ dim_user      User attributes (city, signup_date) │
+│  ├─ dim_product   Product catalog (price, category)   │
+│  └─ dim_date      Calendar dimension (1000+ dates)    │
+│                                                         │
+│  FACTS:                                                │
+│  ├─ fact_orders   Order transactions (FK to dims)     │
+│  └─ fact_events   Behavioral events (user actions)    │
+│                                                         │
+│  METRICS:                                              │
+│  └─ daily_metrics Pipeline health (row counts, etc)   │
+└────────────────────────────────────────────────────────┘
+
+┌────────────────────────────────────────────────────────┐
+│ AUDIT LAYER (audit schema) - Governance               │
+│ ├─ data_quality_failures  Failed quality checks       │
+│ ├─ run_logs               Detailed execution logs      │
+│ └─ schema_changes         DDL history                  │
+└────────────────────────────────────────────────────────┘
+```
+
+### Key Tables (Star Schema)
+
+**Dimensions** (Lookup tables):
+- `dim_user` (pk: user_id) — Customer info
+- `dim_product` (pk: product_id) — Product catalog
+- `dim_date` (pk: date_id) — Calendar (YYYYMMDD format)
+
+**Facts** (Transaction tables):
+- `fact_orders` (fk: user_id, product_id, date_id) — Order details
+- `fact_events` (fk: user_id, date_id) — Behavioral events
+
+---
+
+## 🔄 Pipelines (Airflow DAGs)
+
+### 1. `ecomm_api_polling` 🔄 Real-Time
+
+**Schedule:** Every 10 minutes  
+**Purpose:** Fetch live data from Fake Store API
+
+```
+START → poll_orders → ─┐
+                       ├─→ END
+START → poll_events  ──┤
+                       │
+START → poll_products ─┘
+```
+
+**Tasks:**
+- `poll_orders` — Fetch /carts, insert to raw.orders_json
+- `poll_events` — Fetch /products + /carts, generate synthetic events
+- `poll_products` — Fetch /products, insert to raw.products_json
+
+### 2. `ecomm_warehouse_daily` 📊 Batch (Daily @ 2 AM UTC)
+
+**Schedule:** Daily at 2:00 AM UTC  
+**Purpose:** Transform raw data → warehouse, run quality checks, generate metrics
+
+```
+EXTRACT                    TRANSFORM              QUALITY & LOAD
+├─ extract_orders    ───→  transform_orders  ──┐
+├─ extract_events    ───→  transform_events  ──┼─→ dq_checks ──→ load_dim_* ──→ load_fact_* ──→ metrics ──→ END
+└─ extract_products  ───→  transform_products ┘
+```
+
+**Key Tasks:**
+- **Extract:** Read from local files or API
+- **Transform:** Clean, validate, deduplicate
+- **Quality Checks:** Validate row counts, uniqueness, future dates
+- **Load Dimensions:** Upsert dim_user, dim_product, dim_date
+- **Load Facts:** Insert fact_orders, fact_events (with FK validation)
+- **Metrics:** Insert daily run summary to warehouse.daily_metrics
+
+---
+
+## 🛠️ Technology Stack
+
+| Component | Version | Purpose |
+|-----------|---------|---------|
+| **Apache Airflow** | 2.7.0 | Workflow orchestration & scheduling |
+| **PostgreSQL** | 15 (Alpine) | Data warehouse & OLAP |
+| **Python** | 3.11 | Data transformation & extraction |
+| **Docker** | Latest | Containerization & deployment |
+| **pgAdmin** | Latest | Database UI & query tool |
+
+---
+
+## 📂 Project Structure
 
 ```
 ecomm-warehouse/
 ├── dags/
-│   └── ecomm_warehouse_daily.py       # Main Airflow DAG
+│   ├── ecomm_api_polling.py           # Real-time API polling DAG 🔄
+│   └── ecomm_warehouse_daily.py       # Daily batch DAG 📊
 ├── src/
-│   ├── common/
-│   │   ├── db_utils.py               # Database connection utilities
-│   │   └── logging_utils.py          # Logging setup
 │   ├── extract/
-│   │   ├── orders.py                 # Extract orders from JSON
-│   │   ├── events.py                 # Extract events from CSV
-│   │   └── products.py               # Extract products from API
+│   │   ├── orders.py                  # Extract orders from files
+│   │   ├── events.py                  # Extract events from files
+│   │   ├── products.py                # Extract products from files
+│   │   ├── api_orders.py              # Extract orders from API ✨
+│   │   ├── api_events.py              # Extract events from API ✨
+│   │   └── api_products.py            # Extract products from API ✨
 │   ├── transform/
-│   │   ├── orders.py                 # Clean orders
-│   │   ├── events.py                 # Clean events
-│   │   └── products.py               # Clean products
+│   │   ├── orders.py                  # Orders cleaning & validation
+│   │   ├── events.py                  # Events normalization
+│   │   └── products.py                # Products enrichment
 │   ├── load/
-│   │   ├── dimensions.py             # Load dimension tables
-│   │   ├── facts.py                  # Load fact tables
-│   │   └── metrics.py                # Load metrics
-│   └── quality/
-│       └── dq_checks.py              # Data quality validations
+│   │   ├── dimensions.py              # Load dim_user, dim_product, dim_date
+│   │   ├── facts.py                   # Load fact_orders, fact_events
+│   │   └── metrics.py                 # Calculate daily metrics
+│   ├── quality/
+│   │   └── dq_checks.py               # Data quality validation
+│   └── common/
+│       ├── db_utils.py                # Database connection & queries
+│       └── logging_utils.py           # Logging setup
 ├── sql/
-│   ├── 00_schemas.sql               # Create schemas
-│   ├── 01_raw_tables.sql            # Create raw layer tables
-│   ├── 02_staging_tables.sql        # Create staging tables
-│   ├── 03_warehouse_tables.sql      # Create warehouse tables
-│   ├── 04_audit_tables.sql          # Create audit tables
-│   └── 05_dim_date_seed.sql         # Seed date dimension
+│   ├── 00_schemas.sql                 # Create schemas (raw, staging, warehouse, audit)
+│   ├── 01_raw_tables.sql              # Raw layer DDL
+│   ├── 02_staging_tables.sql          # Staging layer DDL
+│   ├── 03_warehouse_tables.sql        # Warehouse (star schema) DDL
+│   ├── 04_audit_tables.sql            # Audit layer DDL
+│   └── 05_dim_date_seed.sql           # Populate dim_date with 3-year calendar
 ├── data/
+│   ├── generators/
+│   │   └── generate_sample_data.py    # Generate test orders, events, products
 │   └── incoming/
-│       ├── orders/YYYY-MM-DD/       # Order JSON files
-│       ├── events/YYYY-MM-DD/       # Event CSV files
-│       └── products/                # Products JSON files (weekly)
-├── scripts/
-│   └── init-db.sh                   # Database initialization
-├── docs/
-│   ├── ARCHITECTURE.md              # Architecture details
-│   ├── SCHEMA_DIAGRAM.md           # Database schema
-│   └── QUERIES.md                   # Sample analytics queries
-├── docker-compose.yml               # Docker service definitions
-├── requirements.txt                 # Python dependencies
-├── .env                             # Environment variables
-├── Makefile                         # Useful commands
-└── README.md                        # This file
+│       ├── orders/                    # Daily order JSON files
+│       ├── events/                    # Daily event CSV files
+│       └── products/                  # Weekly product JSON files
+├── docker-compose.yml                 # Docker setup (4 services)
+├── requirements.txt                   # Python dependencies
+├── README.md                          # This file
+└── docs/
+    ├── ARCHITECTURE.md                # Detailed design docs
+    ├── QUERIES.md                     # Example SQL queries
+    └── SCHEMA_DIAGRAM.md              # Visual schema
 ```
 
-## 🔄 DAG Workflow
+---
 
-The `ecomm_warehouse_daily` DAG runs daily at 2 AM UTC:
+## 🚀 Common Tasks
 
-```
-start
-  ├─→ extract_orders
-  ├─→ extract_events
-  ├─→ extract_products (weekly, Monday only)
-  │
-  ├─→ transform_orders_to_staging
-  ├─→ transform_events_to_staging
-  ├─→ transform_products_to_staging
-  │
-  └─→ dq_checks (quality validation)
-      ├─→ load_dim_date
-      ├─→ load_dim_product
-      ├─→ load_dim_user
-      │
-      ├─→ load_fact_orders
-      ├─→ load_fact_events
-      │
-      └─→ compute_daily_metrics
-          └─→ end
+### Generate Test Data & Run Pipeline
+
+```bash
+# Generate 1 day of test data (orders + events)
+docker-compose exec airflow-scheduler python \
+  /opt/airflow/data/generators/generate_sample_data.py 2025-12-22 1
+
+# Trigger daily batch pipeline for that date
+docker-compose exec airflow-scheduler airflow dags trigger \
+  ecomm_warehouse_daily --exec-date 2025-12-22
+
+# Watch the DAG in Airflow UI
+# http://localhost:8080 → DAGs → ecomm_warehouse_daily → Graph
 ```
 
-### Task Details
+### Manually Trigger API Polling
 
-| Task | Purpose | Input | Output |
-|------|---------|-------|--------|
-| `extract_*` | Read from source files/API | JSON, CSV, HTTP | Raw layer tables |
-| `transform_*` | Clean and validate | Raw tables | Staging tables |
-| `dq_checks` | Quality validation | Staging data | Pass/Fail + audit logs |
-| `load_dim_*` | Populate dimensions | Staging data | Dimension tables (upsert) |
-| `load_fact_*` | Populate facts | Staging + dimensions | Fact tables (idempotent) |
-| `compute_metrics` | Summary statistics | All layers | daily_metrics table |
+```bash
+# Run the API polling DAG now (doesn't wait for 10-min schedule)
+docker-compose exec airflow-scheduler airflow dags trigger ecomm_api_polling
 
-## 📋 Key Features
+# It will fetch latest data from Fake Store API immediately
+# Check Airflow UI for progress and logs
+```
 
-### ✅ Idempotent Design
-- **Safe reruns**: Each load task deletes then inserts for its load_date
-- **No duplicates**: UPSERT logic with unique constraints
-- **Catchup-ready**: Can backfill multiple days without conflicts
+### Query the Warehouse
 
-### 📊 Data Quality
-Automated checks:
-- **Volume rules**: Orders 100-500K/day, events 500-2M/day
-- **Uniqueness**: No duplicate order_ids or event_ids
-- **Range validation**: Revenue > 0, timestamps not in future
-- **Referential integrity**: Products/users must exist in dimensions
+**Via Terminal:**
+```bash
+docker-compose exec postgres psql -U airflow -d ecommerce_warehouse -c \
+  "SELECT COUNT(*) as total_orders FROM warehouse.fact_orders;"
+```
 
-Bad records are:
-- Logged to `audit.bad_records` with reason
-- Pipeline fails if critical rules violated
-- Can be reviewed and reprocessed
+**Via pgAdmin UI (recommended):**
+1. Open http://localhost:5050
+2. Login: `admin@example.com` / `admin`
+3. Click **Tools** → **Query Tool**
+4. Run SQL queries (see examples below)
 
-### 🔍 Audit Trail
-Every run is logged:
-- Task execution times and status
-- Record counts at each layer
-- Data quality failures
-- Pipeline runtime
+### Example Analytics Queries
 
-### 🚨 Error Handling
-- **Retries**: 2 attempts with 5-min backoff
-- **Timeouts**: Task-specific execution limits
-- **Graceful degradation**: Failures logged, bad records quarantined
-
-## 📈 Sample Analytics Queries
-
-### Revenue by Category (Daily)
+**Top Products by Revenue:**
 ```sql
 SELECT 
-    dp.category,
-    DATE(fo.order_ts) as order_date,
-    COUNT(*) as order_count,
-    SUM(fo.revenue) as total_revenue,
-    AVG(fo.revenue) as avg_order_value
+  dp.product_name,
+  COUNT(fo.order_id) as orders,
+  SUM(fo.revenue) as revenue
 FROM warehouse.fact_orders fo
 JOIN warehouse.dim_product dp ON fo.product_id = dp.product_id
-WHERE DATE(fo.order_ts) >= CURRENT_DATE - INTERVAL '30 days'
-GROUP BY dp.category, DATE(fo.order_ts)
-ORDER BY order_date DESC, total_revenue DESC;
+GROUP BY dp.product_id, dp.product_name
+ORDER BY revenue DESC
+LIMIT 10;
 ```
 
-### User Conversion Funnel
+**Daily Sales Summary:**
 ```sql
-WITH events_by_user AS (
-    SELECT
-        user_id,
-        DATE(event_ts) as event_date,
-        COUNT(CASE WHEN event_type = 'page_view' THEN 1 END) as page_views,
-        COUNT(CASE WHEN event_type = 'add_to_cart' THEN 1 END) as add_to_carts,
-        COUNT(CASE WHEN event_type = 'purchase' THEN 1 END) as purchases
-    FROM warehouse.fact_events
-    GROUP BY user_id, DATE(event_ts)
-)
-SELECT
-    event_date,
-    COUNT(DISTINCT user_id) as users_with_page_views,
-    COUNT(CASE WHEN add_to_carts > 0 THEN user_id END) as users_added_to_cart,
-    COUNT(CASE WHEN purchases > 0 THEN user_id END) as users_purchased,
-    ROUND(100.0 * COUNT(CASE WHEN add_to_carts > 0 THEN user_id END) / 
-          COUNT(DISTINCT user_id), 2) as atc_rate,
-    ROUND(100.0 * COUNT(CASE WHEN purchases > 0 THEN user_id END) / 
-          COUNT(CASE WHEN add_to_carts > 0 THEN user_id END), 2) as conversion_rate
-FROM events_by_user
-GROUP BY event_date
-ORDER BY event_date DESC;
-```
-
-### Repeat Customers
-```sql
-SELECT
-    fo.user_id,
-    COUNT(DISTINCT fo.order_id) as order_count,
-    SUM(fo.revenue) as total_spent,
-    MIN(fo.order_ts) as first_order_date,
-    MAX(fo.order_ts) as last_order_date,
-    (MAX(fo.order_ts) - MIN(fo.order_ts))::INT as days_as_customer
+SELECT 
+  dd.date,
+  COUNT(fo.order_id) as orders,
+  SUM(fo.revenue) as daily_revenue,
+  AVG(fo.revenue) as avg_order_value
 FROM warehouse.fact_orders fo
-GROUP BY fo.user_id
-HAVING COUNT(DISTINCT fo.order_id) >= 2
-ORDER BY order_count DESC, total_spent DESC
-LIMIT 20;
+JOIN warehouse.dim_date dd ON fo.date_id = dd.date_id
+GROUP BY dd.date_id, dd.date
+ORDER BY dd.date DESC
+LIMIT 30;
 ```
 
-### Pipeline Health Dashboard
+**Event Funnel (view → add to cart → order):**
 ```sql
-SELECT
-    run_date,
-    raw_orders_count,
-    staging_orders_count,
-    fact_orders_count,
-    raw_events_count,
-    staging_events_count,
-    fact_events_count,
-    dq_failed_count,
-    runtime_seconds,
-    ROUND(100.0 * fact_orders_count / NULLIF(raw_orders_count, 0), 2) as orders_completion_rate,
-    ROUND(100.0 * fact_events_count / NULLIF(raw_events_count, 0), 2) as events_completion_rate
+SELECT 
+  fe.event_type,
+  COUNT(DISTINCT fe.user_id) as unique_users,
+  COUNT(*) as total_events
+FROM warehouse.fact_events fe
+GROUP BY fe.event_type
+ORDER BY total_events DESC;
+```
+
+**Pipeline Health Check:**
+```sql
+SELECT 
+  run_date,
+  raw_orders_count,
+  staging_orders_count,
+  fact_orders_count,
+  dq_failed_count,
+  runtime_seconds
 FROM warehouse.daily_metrics
 ORDER BY run_date DESC
 LIMIT 10;
 ```
 
-## 🧪 Testing & Development
+---
 
-### Generate Test Data
-```bash
-# Generate 7 days of sample data
-python data/generators/generate_sample_data.py 2025-12-13 7
+## 🔧 Configuration & Environment
 
-# Or specific date range
-python data/generators/generate_sample_data.py 2025-12-01 30
+### Default Credentials
+
+```
+Airflow:
+  Username: airflow
+  Password: airflow
+
+pgAdmin:
+  Email: admin@example.com
+  Password: admin
+
+PostgreSQL:
+  User: airflow
+  Password: airflow
+  Database: ecommerce_warehouse
+  Host: localhost (from host) / postgres (in Docker)
+  Port: 5432
 ```
 
-### Run Pipeline for Specific Date
-```bash
-docker-compose exec airflow-scheduler \
-  airflow dags trigger ecomm_warehouse_daily \
-  --exec-date 2025-12-19
+### Environment Variables
+
+Create `.env` (optional, defaults work):
+```env
+POSTGRES_USER=airflow
+POSTGRES_PASSWORD=airflow
+POSTGRES_DB=ecommerce_warehouse
+POSTGRES_PORT=5432
+AIRFLOW_HOME=/opt/airflow
 ```
 
-### Check Logs
+---
+
+## 🧪 Testing & Troubleshooting
+
+### Check Everything is Running
+
 ```bash
-# Scheduler logs
+docker-compose ps
+# All 4 services should show "Up"
+```
+
+### View Logs
+
+```bash
+# Airflow scheduler logs (DAGs execution)
 docker-compose logs -f airflow-scheduler
 
-# Webserver logs
-docker-compose logs -f airflow-webserver
-
-# Postgres logs
+# PostgreSQL logs
 docker-compose logs -f postgres
+
+# View a specific DAG task log
+docker-compose exec airflow-scheduler airflow tasks logs \
+  ecomm_api_polling poll_orders $(date -u +'%Y-%m-%dT%H:00:00+00:00')
 ```
 
-### Database Debugging
-```bash
-# Connect to Postgres
-docker-compose exec postgres psql -U airflow -d ecommerce_warehouse
-
-# Useful commands:
-\dt raw.* staging.* warehouse.* audit.*  # List tables
-SELECT * FROM warehouse.daily_metrics;
-SELECT * FROM audit.dq_failures;
-SELECT * FROM audit.bad_records;
-```
-
-## 🛠️ Useful Make Commands
+### Verify Data Pipeline
 
 ```bash
-make up              # Start containers
-make down            # Stop containers
-make logs            # View scheduler logs
-make clean           # Remove containers and volumes
-make shell-postgres  # Connect to Postgres shell
-make reset-airflow   # Reset Airflow database
-make airflow-ui      # Print Airflow UI info
-make pgadmin         # Print pgAdmin info
+# Count records at each layer
+docker-compose exec postgres psql -U airflow -d ecommerce_warehouse << EOF
+SELECT 
+  (SELECT COUNT(*) FROM raw.orders_json) as raw_orders,
+  (SELECT COUNT(*) FROM staging.orders_clean) as staging_orders,
+  (SELECT COUNT(*) FROM warehouse.fact_orders) as fact_orders,
+  (SELECT COUNT(*) FROM raw.events_csv) as raw_events,
+  (SELECT COUNT(*) FROM warehouse.fact_events) as fact_events;
+EOF
 ```
 
-## 📦 Dependencies
+### Reset Everything
 
-See [requirements.txt](requirements.txt):
-- `apache-airflow==2.7.0` - Workflow orchestration
-- `psycopg2-binary==2.9.9` - Postgres driver
-- `pandas==2.1.3` - Data manipulation
-- `requests==2.31.0` - HTTP requests
-- `python-dotenv==1.0.0` - Environment variables
+```bash
+# Stop and remove all containers & data
+docker-compose down -v
 
-## 🔐 Security Notes
+# Start fresh
+docker-compose up -d
+```
 
-⚠️ **This is a development setup. For production:**
-- Change default credentials in `.env`
-- Use Airflow Variables/Connections (no hardcoded passwords)
-- Enable SSL/TLS for Postgres
-- Set up proper authentication & RBAC
-- Use secrets management (Vault, AWS Secrets Manager, etc.)
-- Implement network policies and firewalls
-- Enable Postgres encryption at rest
-- Set up proper monitoring and alerting
+---
+
+## 📈 Performance & Scaling
+
+### Current Setup
+- **Batch frequency:** Daily (can change)
+- **Real-time polling:** Every 10 minutes
+- **Storage:** Local PostgreSQL
+- **Execution:** LocalExecutor (single machine)
+- **Scale:** ~1,000+ orders/day, ~10,000+ events/day
+
+### For Production
+
+```
+Current              →    Production
+─────────────────────────────────────
+LocalExecutor        →    KubernetesExecutor (distributed tasks)
+Local Postgres       →    RDS / CloudSQL (managed, HA)
+10-min polling       →    1-5 min polling (or event-driven)
+Docker Desktop       →    Kubernetes / ECS / GCP Cloud Run
+Single machine       →    Auto-scaling clusters
+```
+
+**Upgrade path:**
+1. Replace `postgres` with RDS (change connection string in `docker-compose.yml`)
+2. Add `KubernetesExecutor` to Airflow config
+3. Deploy to EKS / GKE / AKS
+4. Add caching layer (Redis) for hot data
+5. Partition large tables by date for query performance
+
+---
+
+## 🤝 Contributing
+
+Want to extend this project?
+
+- Add new data sources (Shopify, Stripe, GA4, etc.)
+- Implement ML transformations (anomaly detection, recommendations)
+- Add BI dashboard integration (Metabase, Looker)
+- Performance optimizations (partitioning, indexing)
+
+---
 
 ## 📚 Additional Resources
 
-- [Airflow Documentation](https://airflow.apache.org/docs/)
-- [PostgreSQL Documentation](https://www.postgresql.org/docs/)
-- [Star Schema Design](https://en.wikipedia.org/wiki/Star_schema)
-- [Data Quality Best Practices](https://www.talend.com/resources/dataquality/)
+- [Apache Airflow Docs](https://airflow.apache.org/docs/)
+- [PostgreSQL Star Schema Modeling](https://en.wikipedia.org/wiki/Star_schema)
+- [Fake Store API Docs](https://fakestoreapi.com/)
+- [Docker Compose Reference](https://docs.docker.com/compose/)
 
-## 📝 License
+---
 
-This project is provided as-is for educational and interview purposes.
+## 💡 Key Learnings
 
-## ✅ Checklist for Production Readiness
+This project teaches you:
+- ✅ **Real-time data ingestion** from APIs
+- ✅ **Batch processing** from multiple file formats
+- ✅ **Data warehousing** with star schema design
+- ✅ **Airflow orchestration** and DAG design
+- ✅ **Data quality** validation and monitoring
+- ✅ **Container orchestration** with Docker
+- ✅ **SQL** for OLAP and analytics
+- ✅ **Python** for data transformation
 
-- [ ] Update credentials in `.env`
-- [ ] Configure email notifications for failures
-- [ ] Set up proper logging/monitoring (ELK, DataDog, etc.)
-- [ ] Test disaster recovery procedures
-- [ ] Document runbooks for common issues
-- [ ] Set up backups for Postgres
-- [ ] Configure network security
-- [ ] Performance test with production data volumes
-- [ ] Set up alerting thresholds
-- [ ] Document SLA and availability targets
+---
+
+## 📄 License
+
+MIT License - Use freely for learning and commercial projects!
+
+---
+
+**Built with ❤️ for data engineers, analytics engineers, and Python developers.**
+
+**Need help?** Check logs, review Airflow UI (http://localhost:8080), or query the database directly in pgAdmin.
+
+**Happy data engineering!** 🎉

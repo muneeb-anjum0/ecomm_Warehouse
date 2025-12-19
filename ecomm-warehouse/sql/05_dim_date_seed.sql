@@ -33,5 +33,3 @@ SELECT
     EXTRACT(DOW FROM date_val) IN (0, 6)
 FROM date_range
 ON CONFLICT (date_id) DO NOTHING;
-
-COMMENT ON VIEW NONE IS 'Populates dim_date with daily records for the next 3 years';

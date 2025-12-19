@@ -33,21 +33,16 @@ def transform_products_to_staging(run_date: str) -> int:
             INSERT INTO staging.products_clean 
             (product_id, product_name, category, brand, current_price, load_date)
             SELECT
-                (elem->>'product_id')::VARCHAR AS product_id,
-                (elem->>'product_name')::VARCHAR,
-                (elem->>'category')::VARCHAR,
-                (elem->>'brand')::VARCHAR,
-                (elem->>'current_price')::DECIMAL,
+                (raw_json->>'product_id')::VARCHAR AS product_id,
+                (raw_json->>'product_name')::VARCHAR,
+                (raw_json->>'category')::VARCHAR,
+                (raw_json->>'brand')::VARCHAR,
+                (raw_json->>'current_price')::DECIMAL,
                 %s::DATE AS load_date
-            FROM raw.products_json,
-            LATERAL jsonb_array_elements(
-                CASE 
-                    WHEN jsonb_typeof(raw_json) = 'array' THEN raw_json
-                    ELSE jsonb_build_array(raw_json)
-                END
-            ) AS elem
+            FROM raw.products_json
             WHERE run_date = %s
                 AND raw_json IS NOT NULL
+                AND (raw_json->>'product_id') IS NOT NULL
             ON CONFLICT (product_id, load_date) DO UPDATE SET
                 product_name = EXCLUDED.product_name,
                 category = EXCLUDED.category,
